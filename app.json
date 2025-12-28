@@ -1,0 +1,35 @@
+{
+    "expo": {
+        "name": "SheetLogger",
+        "slug": "sheetlogger",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "userInterfaceStyle": "automatic",
+        "scheme": "sheetlogger",
+        "splash": {
+            "backgroundColor": "#1a1a2e"
+        },
+        "assetBundlePatterns": [
+            "**/*"
+        ],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.sheetlogger.app"
+        },
+        "android": {
+            "package": "com.sheetlogger.app"
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static"
+        },
+        "plugins": [
+            "expo-router",
+            "expo-asset",
+            "expo-font"
+        ],
+        "experiments": {
+            "typedRoutes": true
+        }
+    }
+}

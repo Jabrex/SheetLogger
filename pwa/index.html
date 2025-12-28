@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="SheetLogger - Sunucusuz Harcama Takip Sistemi">
+
+    <title>SheetLogger</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="login-screen" class="login-screen">
+            <div class="login-container">
+                <div class="login-header">
+                    <div class="login-icon">💰</div>
+                    <h1 class="login-title">SheetLogger</h1>
+                    <p class="login-subtitle">Giriş yapmak için şifrenizi girin</p>
+                </div>
+
+                <form id="login-form" class="login-form">
+                    <div class="login-input-group">
+                        <label for="password-input">🔒 Şifre</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password-input" class="login-input" placeholder="Şifrenizi girin"
+                                autocomplete="current-password" required>
+                            <button type="button" id="toggle-password" class="toggle-password-btn">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember-me" class="remember-checkbox">
+                        <label for="remember-me">Beni hatırla</label>
+                    </div>
+
+                    <div id="login-error" class="login-error hidden"></div>
+
+                    <button type="submit" id="login-btn" class="login-btn">
+                        <span class="login-btn-text">Giriş Yap</span>
+                        <span class="login-btn-icon">→</span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p>İlk kez mi kullanıyorsunuz?</p>
+                    <button id="setup-password-btn" class="setup-link">Şifre Oluştur</button>
+                </div>
+            </div>
+
+            <!-- First Time Setup Modal -->
+            <div id="setup-modal" class="setup-modal hidden">
+                <div class="setup-content">
+                    <h2>🔐 Şifre Oluştur</h2>
+                    <p>Uygulamanızı korumak için güçlü bir şifre belirleyin.</p>
+
+                    <div class="login-input-group">
+                        <label for="new-password">Yeni Şifre</label>
+                        <input type="password" id="new-password" class="login-input" placeholder="En az 4 karakter"
+                            minlength="4" required>
+                    </div>
+
+                    <div class="login-input-group">
+                        <label for="confirm-password">Şifre Tekrar</label>
+                        <input type="password" id="confirm-password" class="login-input"
+                            placeholder="Şifreyi tekrar girin" required>
+                    </div>
+
+                    <div id="setup-error" class="login-error hidden"></div>
+
+                    <div class="setup-buttons">
+                        <button type="button" id="cancel-setup" class="outline-btn">İptal</button>
+                        <button type="button" id="save-password-btn" class="login-btn">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="loading-screen hidden">
+            <div class="loading-content">
+                <div class="loading-icon">💰</div>
+                <div class="loading-text">SheetLogger</div>
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div id="main-container" class="main-container hidden">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="page-title">Dashboard</h1>
+                <button id="settings-btn" class="icon-btn">⚙️</button>
+            </header>
+
+            <!-- Pages -->
+            <main id="pages-container" class="pages-container">
+                <!-- Dashboard Page -->
+                <section id="dashboard-page" class="page active">
+                    <div class="greeting">
+                        <h2>Merhaba! 👋</h2>
+                        <p id="current-month">Aralık 2025</p>
+                    </div>
+
+                    <div class="stats-card gradient-card">
+                        <p class="stats-label">Bu Ay Toplam Harcama</p>
+                        <h1 id="total-amount" class="stats-amount">0,00 ₺</h1>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <span id="expense-count" class="stat-value">0</span>
+                                <span class="stat-label">İşlem</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span id="category-count" class="stat-value">0</span>
+                                <span class="stat-label">Kategori</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span id="avg-amount" class="stat-value">0</span>
+                                <span class="stat-label">Ortalama</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Kategori Dağılımı</h3>
+                        <div id="category-chart" class="category-chart"></div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Son Harcamalar</h3>
+                        <div id="recent-expenses" class="expense-list"></div>
+                    </div>
+                </section>
+
+                <!-- Expenses Page -->
+                <section id="expenses-page" class="page">
+                    <div class="filter-chips" id="category-filters"></div>
+                    <div id="all-expenses" class="expense-list"></div>
+                </section>
+
+                <!-- Add Expense Page -->
+                <section id="add-page" class="page">
+                    <div class="form-container">
+                        <div class="amount-card">
+                            <label class="input-label">Tutar</label>
+                            <div class="amount-input-container">
+                                <input type="number" id="amount-input" class="amount-input" placeholder="0,00"
+                                    inputmode="decimal">
+                                <span class="currency-symbol">₺</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="input-label">📁 Kategori</label>
+                            <div id="category-selector" class="category-grid"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="input-label">📝 Açıklama</label>
+                            <input type="text" id="description-input" class="text-input"
+                                placeholder="Harcama açıklaması (isteğe bağlı)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="input-label">📅 Tarih</label>
+                            <input type="date" id="date-input" class="text-input">
+                        </div>
+
+                        <div class="quick-amounts">
+                            <label class="input-label">Hızlı Seçim</label>
+                            <div class="quick-amounts-row">
+                                <button class="quick-amount-btn" data-amount="50">50 ₺</button>
+                                <button class="quick-amount-btn" data-amount="100">100 ₺</button>
+                                <button class="quick-amount-btn" data-amount="200">200 ₺</button>
+                                <button class="quick-amount-btn" data-amount="500">500 ₺</button>
+                            </div>
+                        </div>
+
+                        <button id="save-expense-btn" class="primary-btn" disabled>
+                            Harcamayı Kaydet
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Settings Page -->
+                <section id="settings-page" class="page">
+                    <div class="settings-card">
+                        <h3>🔗 Webhook Yapılandırması</h3>
+                        <p class="settings-description">Google Apps Script web app URL'sini girin.</p>
+                        <textarea id="webhook-url-input" class="text-input webhook-input"
+                            placeholder="https://script.google.com/macros/s/..."></textarea>
+                        <button id="save-webhook-btn" class="primary-btn">Kaydet ve Doğrula</button>
+                        <div id="webhook-status" class="webhook-status"></div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>📱 Uygulama Bilgileri</h3>
+                        <div class="info-row">
+                            <span>Uygulama</span>
+                            <span>SheetLogger PWA</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Versiyon</span>
+                            <span>1.0.0</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Backend</span>
+                            <span>Google Apps Script</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>🔐 Şifre Değiştir</h3>
+                        <p class="settings-description">Uygulama giriş şifrenizi değiştirin.</p>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <input type="password" id="current-password-input" class="text-input"
+                                placeholder="Mevcut şifre">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <input type="password" id="new-password-input" class="text-input"
+                                placeholder="Yeni şifre (min 4 karakter)">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <input type="password" id="confirm-new-password-input" class="text-input"
+                                placeholder="Yeni şifre tekrar">
+                        </div>
+                        <button id="change-password-btn" class="primary-btn">Şifreyi Değiştir</button>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>🚪 Oturum</h3>
+                        <button id="logout-btn" class="outline-btn">Çıkış Yap</button>
+                    </div>
+
+                    <div class="settings-card danger">
+                        <h3>⚠️ Tehlikeli Bölge</h3>
+                        <button id="clear-data-btn" class="outline-btn danger">Tüm Ayarları Temizle</button>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-btn active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </button>
+                <button class="nav-btn" data-page="expenses">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Harcamalar</span>
+                </button>
+                <button class="nav-btn add-btn" data-page="add">
+                    <span class="nav-icon">+</span>
+                </button>
+                <button class="nav-btn" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Ayarlar</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast hidden"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
